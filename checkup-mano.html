@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Check-Up Opérationnel – Man&O</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f6f8; color: #1a1a1a; min-height: 100vh; padding: 1.5rem 1rem; }
+
+.wrap { max-width: 640px; margin: 0 auto; }
+
+.header { background: #1a73c8; color: white; padding: 1.4rem 1.75rem; border-radius: 14px; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem; }
+.logo-circle { width: 48px; height: 48px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.header-text h1 { font-size: 17px; font-weight: 600; line-height: 1.3; }
+.header-text p { font-size: 13px; color: rgba(255,255,255,0.82); margin-top: 3px; }
+
+.intro-box { background: white; border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem; font-size: 14px; color: #555; line-height: 1.65; border: 1px solid #e8e8e8; }
+.intro-box strong { color: #1a1a1a; }
+
+.pillar-preview { background: white; border: 1px solid #e8e8e8; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+.pillar-badge { display: inline-block; font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 99px; margin-bottom: 0.5rem; }
+.p1 { background: #dceefb; color: #1557a0; }
+.p2 { background: #fef3c7; color: #92400e; }
+.p3 { background: #dcfce7; color: #166534; }
+.pillar-preview h3 { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+.pillar-preview p { font-size: 13px; color: #666; line-height: 1.5; }
+
+.progress-label { display: flex; justify-content: space-between; font-size: 12px; color: #888; margin-bottom: 5px; }
+.progress-bar { background: #e5e7eb; border-radius: 99px; height: 6px; margin-bottom: 1.25rem; overflow: hidden; }
+.progress-fill { height: 100%; background: #1a73c8; border-radius: 99px; transition: width 0.3s ease; }
+
+.q-card { background: white; border: 1px solid #e8e8e8; border-radius: 14px; padding: 1.4rem 1.5rem; margin-bottom: 1rem; }
+.q-card h2 { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
+.q-card p { font-size: 13.5px; color: #555; line-height: 1.6; margin-bottom: 1.1rem; }
+
+.options { display: flex; flex-direction: column; gap: 8px; }
+.option { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 9px; border: 1.5px solid #e5e7eb; cursor: pointer; font-size: 14px; color: #333; background: #fafafa; transition: all 0.15s; user-select: none; }
+.option:hover { border-color: #1a73c8; background: #eff6ff; color: #1557a0; }
+.option.selected { border-color: #1a73c8; background: #eff6ff; color: #1557a0; font-weight: 500; }
+.dot { width: 18px; height: 18px; border-radius: 50%; border: 2px solid currentColor; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.option.selected .dot::after { content: ''; width: 9px; height: 9px; background: #1a73c8; border-radius: 50%; display: block; }
+.option.error { border-color: #ef4444 !important; }
+
+.nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1.25rem; }
+.btn { padding: 10px 22px; border-radius: 9px; font-size: 14px; font-weight: 500; cursor: pointer; border: 1.5px solid #d1d5db; background: white; color: #333; transition: background 0.15s; font-family: inherit; }
+.btn:hover { background: #f3f4f6; }
+.btn.primary { background: #1a73c8; color: white; border-color: #1a73c8; }
+.btn.primary:hover { background: #1557a0; }
+.btn:disabled { opacity: 0.4; cursor: default; pointer-events: none; }
+
+.contact-card { background: white; border: 1px solid #e8e8e8; border-radius: 14px; padding: 1.5rem; }
+.contact-card h2 { font-size: 16px; font-weight: 600; margin-bottom: 5px; }
+.contact-card > p { font-size: 13.5px; color: #666; margin-bottom: 1.25rem; line-height: 1.55; }
+.field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.field label { font-size: 13px; color: #555; font-weight: 500; }
+.field input { padding: 10px 13px; border-radius: 9px; border: 1.5px solid #d1d5db; font-size: 14px; color: #1a1a1a; font-family: inherit; transition: border-color 0.15s; background: #fafafa; }
+.field input:focus { outline: none; border-color: #1a73c8; background: white; }
+.rgpd { font-size: 12px; color: #666; display: flex; gap: 9px; align-items: flex-start; margin: 1rem 0 0.5rem; line-height: 1.5; }
+.rgpd input { margin-top: 2px; flex-shrink: 0; width: 15px; height: 15px; cursor: pointer; }
+.form-error { color: #ef4444; font-size: 12.5px; margin-bottom: 8px; display: none; }
+
+.results-card { background: white; border: 1px solid #e8e8e8; border-radius: 14px; padding: 1.5rem; }
+.results-card h2 { font-size: 17px; font-weight: 600; margin-bottom: 1rem; }
+.score-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.25rem; }
+.sc { background: #f9fafb; border-radius: 10px; padding: 0.8rem 1rem; }
+.sc .sc-label { font-size: 11.5px; color: #888; margin-bottom: 5px; line-height: 1.3; }
+.sc .sc-val { font-size: 24px; font-weight: 700; }
+.sc-1 .sc-val { color: #1557a0; }
+.sc-2 .sc-val { color: #92400e; }
+.sc-3 .sc-val { color: #166534; }
+
+.alert-box { background: #fffbeb; border-left: 3px solid #f59e0b; border-radius: 0 10px 10px 0; padding: 1rem 1.1rem; font-size: 13.5px; line-height: 1.65; color: #78350f; margin-bottom: 1rem; }
+.detail-text { font-size: 13.5px; color: #555; line-height: 1.65; margin-bottom: 1.25rem; }
+
+.cta-box { background: #1a73c8; color: white; border-radius: 12px; padding: 1.25rem 1.5rem; text-align: center; }
+.cta-box p { color: rgba(255,255,255,0.88); font-size: 13.5px; margin-bottom: 12px; line-height: 1.55; }
+.cta-box .btn { background: white; color: #1a73c8; border-color: white; font-weight: 600; font-size: 14px; }
+.cta-box .btn:hover { background: #dceefb; }
+
+.hidden { display: none !important; }
+
+.sending-msg { text-align: center; padding: 1rem; font-size: 13.5px; color: #666; display: none; }
+
+@media (max-width: 480px) {
+  body { padding: 1rem 0.75rem; }
+  .score-grid { grid-template-columns: 1fr; }
+  .header { padding: 1.1rem 1.25rem; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div class="logo-circle">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="38" height="38">
+        <circle cx="14" cy="15" r="10" stroke="#1a73c8" stroke-width="2.2" fill="none"/>
+        <circle cx="26" cy="15" r="10" stroke="#c0392b" stroke-width="2.2" fill="none"/>
+        <circle cx="20" cy="25" r="10" stroke="#556b2f" stroke-width="2.2" fill="none"/>
+        <circle cx="20" cy="18" r="4.5" fill="#1a73c8"/>
+        <circle cx="20" cy="18" r="2" fill="white"/>
+      </svg>
+    </div>
+    <div class="header-text">
+      <h1>Le Check-Up Opérationnel</h1>
+      <p>15 points de contrôle · Man&amp;O par Sébastien</p>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div id="screen-intro">
+    <div class="intro-box">
+      <strong>Prenez 3 minutes pour évaluer la santé de votre organisation.</strong><br>
+      Répondez honnêtement aux 15 questions pour générer votre diagnostic de performance — et bénéficiez d'une analyse offerte lors d'un rendez-vous visio de 30 minutes.
+    </div>
+    <div class="pillar-preview">
+      <div class="pillar-badge p1">Pilier 1</div>
+      <h3>La Posture Managériale</h3>
+      <p>Vos managers subissent-ils le quotidien… ou pilotent-ils réellement leurs équipes ?</p>
+    </div>
+    <div class="pillar-preview">
+      <div class="pillar-badge p2">Pilier 2</div>
+      <h3>Structuration &amp; Méthodes</h3>
+      <p>Votre organisation peut-elle absorber un choc sans se désorganiser ?</p>
+    </div>
+    <div class="pillar-preview">
+      <div class="pillar-badge p3">Pilier 3</div>
+      <h3>Rentabilité &amp; Philosophie Lean</h3>
+      <p>Le Lean au service de votre marge nette.</p>
+    </div>
+    <div class="nav" style="margin-top:1.5rem;">
+      <span></span>
+      <button class="btn primary" onclick="startQuiz()">Commencer le diagnostic →</button>
+    </div>
+  </div>
+
+  <!-- QUESTIONS -->
+  <div id="screen-questions" class="hidden">
+    <div class="progress-label">
+      <span id="q-counter">Question 1 / 15</span>
+      <span id="q-pillar-label"></span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:7%"></div></div>
+    <div id="q-badge"></div>
+    <div class="q-card">
+      <h2 id="q-title"></h2>
+      <p id="q-text"></p>
+      <div class="options" id="q-options"></div>
+    </div>
+    <div class="nav">
+      <button class="btn" id="btn-prev" onclick="prevQ()">← Précédent</button>
+      <button class="btn primary" id="btn-next" onclick="nextQ()">Suivant →</button>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div id="screen-contact" class="hidden">
+    <div class="contact-card">
+      <h2>Recevoir votre diagnostic personnalisé</h2>
+      <p>Indiquez vos coordonnées pour recevoir votre analyse par email et prendre rendez-vous avec Sébastien.</p>
+      <div class="field"><label>Prénom et nom *</label><input type="text" id="f-name" placeholder="ex. Marie Dupont" /></div>
+      <div class="field"><label>Email professionnel *</label><input type="email" id="f-email" placeholder="ex. m.dupont@societe.fr" /></div>
+      <div class="field"><label>Entreprise</label><input type="text" id="f-company" placeholder="ex. Acier du Rhône SA" /></div>
+      <div class="field"><label>Poste</label><input type="text" id="f-role" placeholder="ex. Directeur de production" /></div>
+      <div class="rgpd">
+        <input type="checkbox" id="rgpd-check" />
+        <label for="rgpd-check">J'accepte que mes données soient utilisées pour recevoir mon diagnostic et être contacté(e) par Sébastien (Man&amp;O). Données conservées 2 ans, suppression possible sur simple demande à l'adresse de contact Man&amp;O.</label>
+      </div>
+      <div class="form-error" id="form-error">Merci de remplir les champs obligatoires et d'accepter la politique de confidentialité.</div>
+      <div class="sending-msg" id="sending-msg">Envoi en cours…</div>
+      <div class="nav">
+        <button class="btn" onclick="goToQ(14)">← Retour</button>
+        <button class="btn primary" id="btn-submit" onclick="submitForm()">Voir mon diagnostic →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RÉSULTATS -->
+  <div id="screen-results" class="hidden">
+    <div class="results-card">
+      <h2>Votre diagnostic Check-Up Opérationnel</h2>
+      <div class="score-grid">
+        <div class="sc sc-1"><div class="sc-label">Posture Managériale</div><div class="sc-val" id="s1">—</div></div>
+        <div class="sc sc-2"><div class="sc-label">Structuration &amp; Méthodes</div><div class="sc-val" id="s2">—</div></div>
+        <div class="sc sc-3"><div class="sc-label">Rentabilité Lean</div><div class="sc-val" id="s3">—</div></div>
+      </div>
+      <div class="alert-box" id="result-alert"></div>
+      <p class="detail-text" id="result-detail"></p>
+      <div class="cta-box">
+        <p>Bénéficiez d'une analyse offerte de votre check-up lors d'un rendez-vous visio de 30 minutes avec Sébastien, fondateur de Man&amp;O.</p>
+        <!-- REMPLACER L'URL CI-DESSOUS PAR LE LIEN CALENDLY DE SÉBASTIEN -->
+        <a href="https://calendly.com" target="_blank"><button class="btn">Prendre rendez-vous →</button></a>
+      </div>
+    </div>
+  </div>
+
+</div>
+<script>
+const questions = [
+  { pillar: 1, title: "1. Rituels quotidiens", text: "Mes managers animent des rituels courts et réguliers permettant de partager les priorités, répartir les tâches et suivre l'avancement des actions." },
+  { pillar: 1, title: "2. Gestion des écarts", text: "Face à un écart de comportement, de sécurité ou de performance, mes managers savent recadrer factuellement tout en maintenant une relation de travail constructive." },
+  { pillar: 1, title: "3. Présence terrain & développement des équipes", text: "Mes managers passent majoritairement leur temps sur le terrain à accompagner les équipes, développer les compétences et soutenir la résolution des problèmes." },
+  { pillar: 1, title: "4. Délégation et prise de lead", text: "Les managers prennent naturellement le lead sur leurs sujets, disposent d'une autonomie suffisante pour agir et font avancer les actions sans dépendre systématiquement de leur hiérarchie." },
+  { pillar: 1, title: "5. Exemplarité", text: "Le niveau d'exigence attendu (sécurité, qualité, comportement, service client…) est porté au quotidien par l'encadrement avec cohérence et exemplarité." },
+  { pillar: 2, title: "6. Standards de travail", text: "Les postes clés disposent de standards simples, visuels et à jour permettant une prise en main rapide par un nouvel arrivant." },
+  { pillar: 2, title: "7. Dépendance aux personnes clés", text: "Les compétences critiques sont identifiées, transmises et sécurisées afin de limiter la dépendance à quelques experts historiques." },
+  { pillar: 2, title: "8. Management visuel", text: "En entrant dans l'atelier ou le service, chacun peut comprendre rapidement la situation opérationnelle (charge, performance, retard, incidents…)." },
+  { pillar: 2, title: "9. Pilotage de la charge", text: "L'entreprise dispose d'une méthode pour anticiper, répartir et lisser la charge de travail afin d'éviter surcharge, stress ou sous-utilisation des ressources." },
+  { pillar: 2, title: "10. Clarté des rôles & interfaces", text: "Les responsabilités entre services (Production, Maintenance, Qualité, Supply…) sont clairement définies afin d'éviter les zones grises et pertes d'efficacité." },
+  { pillar: 3, title: "11. Chasse aux gaspillages", text: "Les équipes sont sensibilisées à identifier et signaler spontanément les sources de gaspillage (attentes, déplacements, rebuts, pertes de temps…)." },
+  { pillar: 3, title: "12. Résolution de problèmes", text: "Face à un défaut qualité, une panne ou un incident, les équipes recherchent systématiquement les causes racines plutôt que des solutions temporaires." },
+  { pillar: 3, title: "13. Pilotage par les indicateurs", text: "Les décisions opérationnelles sont prises à partir d'indicateurs fiables, compris par les équipes et utilisés au quotidien." },
+  { pillar: 3, title: "14. Culture d'amélioration continue", text: "Il existe un système simple permettant aux équipes de proposer, tester et mettre en œuvre des améliorations sur leur périmètre." },
+  { pillar: 3, title: "15. Alignement terrain & rentabilité", text: "Les décisions prises au niveau opérationnel tiennent compte de leur impact sur la performance globale et la rentabilité de l'entreprise." }
+];
+
+const opts = ["Oui, totalement", "Partiellement / En cours", "Pas encore en place"];
+const pillarLabels = { 1: "Pilier 1 – Posture Managériale", 2: "Pilier 2 – Structuration & Méthodes", 3: "Pilier 3 – Rentabilité Lean" };
+const pillarClass = { 1: "p1", 2: "p2", 3: "p3" };
+
+let answers = new Array(15).fill(null);
+let current = 0;
+
+function show(id) {
+  ['screen-intro','screen-questions','screen-contact','screen-results'].forEach(s => {
+    document.getElementById(s).classList.add('hidden');
+  });
+  document.getElementById(id).classList.remove('hidden');
+  window.scrollTo(0, 0);
+}
+
+function startQuiz() { show('screen-questions'); renderQ(0); }
+
+function renderQ(idx) {
+  current = idx;
+  const q = questions[idx];
+  document.getElementById('q-counter').textContent = 'Question ' + (idx + 1) + ' / 15';
+  document.getElementById('q-pillar-label').textContent = pillarLabels[q.pillar];
+  document.getElementById('progress-fill').style.width = Math.round(((idx + 1) / 15) * 100) + '%';
+  document.getElementById('q-badge').innerHTML = '<div class="pillar-badge ' + pillarClass[q.pillar] + '" style="margin-bottom:0.75rem;">' + pillarLabels[q.pillar] + '</div>';
+  document.getElementById('q-title').textContent = q.title;
+  document.getElementById('q-text').textContent = q.text;
+  const container = document.getElementById('q-options');
+  container.innerHTML = opts.map((o, i) => {
+    const sel = answers[idx] === i ? 'selected' : '';
+    return '<div class="option ' + sel + '" onclick="selectOpt(' + i + ')"><div class="dot"></div>' + o + '</div>';
+  }).join('');
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').textContent = idx === 14 ? 'Continuer →' : 'Suivant →';
+}
+
+function selectOpt(i) {
+  answers[current] = i;
+  document.querySelectorAll('.option').forEach((el, idx) => {
+    el.classList.toggle('selected', idx === i);
+    el.classList.remove('error');
+  });
+}
+
+function prevQ() { if (current > 0) renderQ(current - 1); }
+function goToQ(i) { show('screen-questions'); renderQ(i); }
+
+function nextQ() {
+  if (answers[current] === null) {
+    document.querySelectorAll('.option').forEach(el => el.classList.add('error'));
+    setTimeout(() => document.querySelectorAll('.option').forEach(el => el.classList.remove('error')), 900);
+    return;
+  }
+  if (current === 14) { show('screen-contact'); }
+  else { renderQ(current + 1); }
+}
+
+function calcScore(start, end) {
+  let s = 0;
+  for (let i = start; i <= end; i++) {
+    if (answers[i] === 0) s += 2;
+    else if (answers[i] === 1) s += 1;
+  }
+  return s;
+}
+
+function submitForm() {
+  const name = document.getElementById('f-name').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const company = document.getElementById('f-company').value.trim();
+  const role = document.getElementById('f-role').value.trim();
+  const rgpd = document.getElementById('rgpd-check').checked;
+  const err = document.getElementById('form-error');
+
+  if (!name || !email || !rgpd) { err.style.display = 'block'; return; }
+  err.style.display = 'none';
+
+  const s1 = calcScore(0, 4);
+  const s2 = calcScore(5, 9);
+  const s3 = calcScore(10, 14);
+
+  const minScore = Math.min(s1, s2, s3);
+  let alert = '', detail = '';
+  if (s1 === minScore) {
+    alert = '🚨 Alerte Management : Vos managers de proximité semblent démunis ou passent leur temps à éteindre des incendies. Il est urgent de recréer un cadre clair et de travailler leur posture pour asseoir une autorité juste.';
+    detail = 'Le management de proximité est le levier le plus direct sur la performance opérationnelle. Sans rituels, sans posture claire et sans délégation effective, votre organisation reste fragile aux aléas.';
+  } else if (s2 === minScore) {
+    alert = '🚨 Alerte Structuration : Votre organisation repose trop sur le courage de quelques individus. Au moindre choc, la production risque de dérailler. Il faut implanter des standards robustes.';
+    detail = 'La structuration est la colonne vertébrale de la robustesse. Sans standards, sans management visuel et sans clarté des rôles, chaque aléa génère une désorganisation coûteuse.';
+  } else {
+    alert = '🚨 Alerte Rentabilité : La culture de la performance n\'est pas encore ancrée sur le terrain. Vos marges s\'érodent probablement à cause de coûts cachés et de gaspillages non identifiés.';
+    detail = 'Le Lean, bien appliqué, génère des gains tangibles sur vos marges. Sans indicateurs terrain ni culture d\'amélioration continue, les gaspillages restent invisibles et s\'accumulent silencieusement.';
+  }
+
+  document.getElementById('s1').textContent = s1 + '/10';
+  document.getElementById('s2').textContent = s2 + '/10';
+  document.getElementById('s3').textContent = s3 + '/10';
+  document.getElementById('result-alert').textContent = alert;
+  document.getElementById('result-detail').textContent = detail;
+
+  // === BREVO : décommenter et configurer quand l'intégration email est prête ===
+  // sendBrevoEmail({ name, email, company, role, s1, s2, s3, alert });
+
+  show('screen-results');
+}
+
+// === FONCTION BREVO (à activer) ===
+// async function sendBrevoEmail({ name, email, company, role, s1, s2, s3, alert }) {
+//   await fetch('https://api.brevo.com/v3/smtp/email', {
+//     method: 'POST',
+//     headers: {
+//       'Content-Type': 'application/json',
+//       'api-key': 'VOTRE_CLE_API_BREVO'
+//     },
+//     body: JSON.stringify({
+//       templateId: VOTRE_ID_TEMPLATE_BREVO,
+//       to: [{ email, name }],
+//       params: { prenom: name.split(' ')[0], score1: s1, score2: s2, score3: s3, alerte: alert, entreprise: company, poste: role }
+//     })
+//   });
+// }
+</script>
+</body>
+</html>
